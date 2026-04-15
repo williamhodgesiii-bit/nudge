@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #f5f1ea;
+  --surface: #fbf9f6;
+  --ink: #0f172a;
+  --ink-muted: #475569;
+  --line: #e6dfd1;
+}
+
+html, body {
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+@layer components {
+  .card {
+    @apply bg-stone-50 border border-stone-200 rounded-2xl shadow-soft;
+  }
+  .card-lift {
+    @apply bg-stone-50 border border-stone-200 rounded-2xl shadow-soft transition hover:shadow-lift hover:-translate-y-0.5;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-primary {
+    @apply btn bg-slate-900 text-stone-50 hover:bg-slate-800;
+  }
+  .btn-secondary {
+    @apply btn bg-stone-100 text-slate-900 border border-stone-200 hover:bg-stone-150;
+  }
+  .btn-ghost {
+    @apply btn text-slate-700 hover:bg-stone-100;
+  }
+  .input {
+    @apply w-full rounded-xl border border-stone-200 bg-stone-50 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900 transition;
+  }
+  .label {
+    @apply block text-xs font-medium uppercase tracking-wide text-slate-500 mb-1.5;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full border border-stone-200 bg-stone-100 px-2.5 py-1 text-xs text-slate-700;
+  }
+  .pill-active {
+    @apply rounded-full bg-slate-900 text-stone-50 text-xs px-2.5 py-1;
+  }
+  .divider {
+    @apply h-px bg-stone-200 w-full;
+  }
+  .h-display {
+    @apply font-serif text-slate-900 tracking-tight;
+  }
+}
+
+/* canvas background texture */
+.canvas {
+  background:
+    radial-gradient(1200px 600px at 0% -10%, rgba(15,23,42,0.04), transparent),
+    radial-gradient(900px 500px at 100% 110%, rgba(15,23,42,0.03), transparent),
+    var(--bg);
+}
+
+::selection { background: #0f172a; color: #fbf9f6; }
+
+/* subtle scrollbar */
+* { scrollbar-width: thin; scrollbar-color: #cfc6b3 transparent; }

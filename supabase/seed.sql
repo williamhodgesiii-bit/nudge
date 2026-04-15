@@ -1,0 +1,18 @@
+-- Seed Chicago professionals (mock).
+insert into public.contacts (full_name, title, company, industry, city, school, linkedin_url, bio, tags, seeded) values
+('Maya Patel','Senior Product Manager','Google','Technology','Chicago','Northwestern University','https://www.linkedin.com/in/example-maya','Builds consumer growth products. Loves mentoring undergrads in Chicago.','{"product","tech","mentor"}',true),
+('Jordan Chen','Investment Banking Associate','JPMorgan Chase','Finance','Chicago','University of Chicago','https://www.linkedin.com/in/example-jordan','Coverage: Industrials. Booth alum, happy to chat with students breaking into IB.','{"finance","ib","booth"}',true),
+('Priya Williams','Management Consultant','McKinsey & Company','Consulting','Chicago','Northwestern University','https://www.linkedin.com/in/example-priya','Healthcare practice. Coffee chats welcome — 15 min slots.','{"consulting","healthcare"}',true),
+('Daniel Rivera','Software Engineer II','Stripe','Technology','Chicago','UIUC','https://www.linkedin.com/in/example-daniel','Payments infra. Open to chatting about new grad SWE in Chicago/Remote.','{"swe","fintech"}',true),
+('Aisha Brooks','Data Scientist','Discover Financial','Finance','Chicago','University of Illinois Chicago','https://www.linkedin.com/in/example-aisha','Risk modeling. UIC alum mentoring first-gen students.','{"data","finance","first-gen"}',true),
+('Ethan Goldberg','Strategy Lead','United Airlines','Aviation','Chicago','Northwestern Kellogg','https://www.linkedin.com/in/example-ethan','Network strategy at United. Kellogg MBA, ex-BCG.','{"strategy","aviation"}',true),
+('Sofia Martínez','Brand Manager','Kraft Heinz','CPG','Chicago','University of Notre Dame','https://www.linkedin.com/in/example-sofia','Brand on Oscar Mayer. Loves CPG marketing breaks-ins.','{"marketing","cpg"}',true),
+('Marcus Lee','VC Associate','Hyde Park Angels','Venture Capital','Chicago','University of Chicago','https://www.linkedin.com/in/example-marcus','Early-stage Midwest tech. Always meeting student founders.','{"vc","startups"}',true),
+('Rachel Nguyen','UX Designer','Sprout Social','Technology','Chicago','DePaul University','https://www.linkedin.com/in/example-rachel','B2B SaaS design. DePaul alum and portfolio reviewer.','{"design","ux"}',true),
+('Tariq Johnson','Equity Research Analyst','Morningstar','Finance','Chicago','Loyola University Chicago','https://www.linkedin.com/in/example-tariq','Covers asset managers. Mentors via NABA Chicago.','{"finance","research"}',true),
+('Hannah Park','Operations Manager','Tempus AI','Healthtech','Chicago','Northwestern University','https://www.linkedin.com/in/example-hannah','Scaling clinical operations. Open to ops/strategy chats.','{"ops","healthtech"}',true),
+('Andre Thompson','Partner','Kirkland & Ellis','Legal','Chicago','University of Chicago Law','https://www.linkedin.com/in/example-andre','M&A. Speaks at pre-law panels around Chicago.','{"law","m&a"}',true),
+('Lily Zhao','Founding Engineer','Tovala','Startups','Chicago','Northwestern University','https://www.linkedin.com/in/example-lily','Early eng. Loves chatting with CS students about startups.','{"swe","startups"}',true),
+('Michael O''Connor','Senior Trader','CME Group','Finance','Chicago','UIUC','https://www.linkedin.com/in/example-michael','Rates desk. Open to students interested in trading.','{"trading","finance"}',true),
+('Naomi Adebayo','Public Affairs Manager','City of Chicago','Public Sector','Chicago','UIC','https://www.linkedin.com/in/example-naomi','Civic tech & policy. Mentors first-gen public service students.','{"policy","govt"}',true)
+on conflict do nothing;
