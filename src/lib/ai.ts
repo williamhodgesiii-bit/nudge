@@ -53,8 +53,19 @@ export async function generateStrategy(p: ProfileInput) {
   );
 }
 
-type DraftInput = {
+export type DraftInput = {
   channel: "linkedin_dm" | "intro_email" | "follow_up" | "thank_you";
+  goal?:
+    | "informational_interview"
+    | "mentorship_ask"
+    | "internship_interest"
+    | "alumni_outreach"
+    | "follow_up_no_reply"
+    | "thank_you_after_meeting"
+    | null;
+  length?: "short" | "medium" | "long";
+  confidence?: "humble" | "balanced" | "confident";
+  ask_type?: "15_min_chat" | "advice_only" | "referral" | "review_resume" | "no_ask";
   student: ProfileInput & { full_name?: string };
   contact: {
     full_name: string;
@@ -64,21 +75,58 @@ type DraftInput = {
     bio?: string | null;
   };
   notes?: string;
+  prior_messages?: { channel: string; body: string; sent_at: string }[];
 };
 
 const channelDirective = {
-  linkedin_dm: "LinkedIn DM. Max 280 characters. No subject. Casual but respectful. End with a small ask (15 min chat).",
-  intro_email: "Cold intro email. Subject line + body. 120-160 words. Clear ask: 15-20 min call.",
-  follow_up: "Polite follow-up after no reply. Reference prior message. 80-110 words. Light, no guilt.",
-  thank_you: "Thank-you note after a chat. 80-110 words. Specific takeaway + next step.",
+  linkedin_dm: "LinkedIn DM.",
+  intro_email: "Cold intro email with subject + body.",
+  follow_up: "Polite follow-up after no reply. Reference prior message briefly.",
+  thank_you: "Thank-you note after a chat. Include a specific takeaway + next step.",
 } as const;
+
+const lengthDirective = {
+  short: "Keep it tight: LinkedIn DM ≤ 220 chars; email 80–110 words.",
+  medium: "LinkedIn DM ≤ 280 chars; email 120–160 words.",
+  long: "LinkedIn DM ≤ 320 chars; email 180–220 words.",
+};
+
+const confidenceDirective = {
+  humble: "Humble and respectful. Acknowledge their time.",
+  balanced: "Warm, confident, not apologetic.",
+  confident: "Direct and self-assured. No hedging.",
+};
+
+const askDirective = {
+  "15_min_chat": "Ask for a 15 min chat.",
+  advice_only: "Ask only for a short piece of written advice.",
+  referral: "Gently ask if they'd refer you to a relevant person on their team.",
+  review_resume: "Ask if they'd be willing to glance at a 1-page resume.",
+  no_ask: "Make no ask — only a meaningful intro.",
+};
 
 export async function generateDraft(d: DraftInput) {
   const wantsSubject = d.channel === "intro_email";
-  const sys = `You write personalized, human, non-cringe student outreach. Match the requested tone. Never invent facts. Never use em-dashes excessively. No "I hope this email finds you well." ${wantsSubject ? "Return JSON with keys 'subject' and 'body'." : "Return JSON with key 'body' only."}`;
-  const user = `Channel: ${channelDirective[d.channel]}
-Tone: ${d.student.tone || "warm-professional"}
-Comfort level: ${d.student.comfort || "medium"}
+  const goal = d.goal ? `\nGoal: ${d.goal.replace(/_/g, " ")}.` : "";
+  const length = lengthDirective[d.length || "medium"];
+  const conf = confidenceDirective[d.confidence || "balanced"];
+  const ask = askDirective[d.ask_type || "15_min_chat"];
+  const prior =
+    d.prior_messages && d.prior_messages.length
+      ? `\nPrior messages sent (do not repeat them verbatim):\n${d.prior_messages
+          .slice(0, 3)
+          .map((m) => `- [${m.channel}] ${m.body.slice(0, 240)}`)
+          .join("\n")}`
+      : "";
+
+  const sys = `You write personalized, human, non-cringe student outreach. Match the requested tone. Never invent facts. Avoid "I hope this email finds you well." ${wantsSubject ? "Return JSON with keys 'subject' and 'body'." : "Return JSON with key 'body' only."}`;
+
+  const user = `${channelDirective[d.channel]}${goal}
+Tone: ${d.student.tone || "warm-professional"}.
+Length: ${length}
+Confidence: ${conf}
+Ask: ${ask}
+Comfort: ${d.student.comfort || "medium"}.${prior}
 
 Student:
 ${JSON.stringify(d.student)}
@@ -90,7 +138,8 @@ Notes from student:
 ${d.notes || "(none)"}
 
 Return only valid JSON.`;
-  const raw = await complete(sys, user, 600);
+
+  const raw = await complete(sys, user, 700);
   try {
     const json = JSON.parse(raw.replace(/^```json\s*|\s*```$/g, ""));
     return {

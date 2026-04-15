@@ -12,6 +12,18 @@ export type Status =
   | "completed"
   | "closed";
 
+export type DraftState = "draft" | "ready" | "sent";
+
+export type Goal =
+  | "informational_interview"
+  | "mentorship_ask"
+  | "internship_interest"
+  | "alumni_outreach"
+  | "follow_up_no_reply"
+  | "thank_you_after_meeting";
+
+export type Seniority = "student" | "entry" | "mid" | "senior" | "executive";
+
 export const STATUS_COLUMNS: { key: Status; label: string }[] = [
   { key: "saved", label: "Saved" },
   { key: "ready", label: "Ready" },
@@ -28,6 +40,23 @@ export const CHANNEL_LABELS: Record<Channel, string> = {
   intro_email: "Intro email",
   follow_up: "Follow-up",
   thank_you: "Thank-you note",
+};
+
+export const GOAL_LABELS: Record<Goal, string> = {
+  informational_interview: "Informational interview",
+  mentorship_ask: "Mentorship ask",
+  internship_interest: "Internship interest",
+  alumni_outreach: "Alumni outreach",
+  follow_up_no_reply: "Follow-up after no reply",
+  thank_you_after_meeting: "Thank-you after meeting",
+};
+
+export const SENIORITY_LABELS: Record<Seniority, string> = {
+  student: "Student",
+  entry: "Entry",
+  mid: "Mid",
+  senior: "Senior",
+  executive: "Executive",
 };
 
 export type StudentProfile = {
@@ -65,6 +94,7 @@ export type Contact = {
   email: string | null;
   bio: string | null;
   tags: string[];
+  seniority: Seniority | null;
 };
 
 export type RelationshipEntry = {
@@ -74,6 +104,9 @@ export type RelationshipEntry = {
   status: Status;
   notes: string | null;
   next_action_at: string | null;
+  last_touch_at: string | null;
+  tags: string[];
+  campaign_id: string | null;
   updated_at: string;
 };
 
@@ -82,8 +115,55 @@ export type OutreachDraft = {
   user_id: string;
   contact_id: string | null;
   channel: Channel;
+  goal: Goal | null;
   subject: string | null;
   body: string;
   edited: boolean;
+  state: DraftState;
+  sent_at: string | null;
+  campaign_id: string | null;
+  created_at: string;
+};
+
+export type SentMessage = {
+  id: string;
+  user_id: string;
+  contact_id: string;
+  draft_id: string | null;
+  channel: Channel;
+  goal: string | null;
+  subject: string | null;
+  body: string;
+  sent_at: string;
+};
+
+export type ContactNote = {
+  id: string;
+  user_id: string;
+  contact_id: string;
+  kind: "general" | "meeting";
+  note: string;
+  created_at: string;
+};
+
+export type Reminder = {
+  id: string;
+  user_id: string;
+  contact_id: string | null;
+  due_at: string;
+  kind: "follow_up" | "meeting_prep" | "thank_you" | "custom";
+  note: string | null;
+  dismissed_at: string | null;
+  created_at: string;
+};
+
+export type Template = {
+  id: string;
+  user_id: string;
+  name: string;
+  goal: Goal | null;
+  channel: Channel;
+  subject: string | null;
+  body: string;
   created_at: string;
 };

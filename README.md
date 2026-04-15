@@ -2,7 +2,7 @@
 
 A student networking app that helps you onboard, define your goals, discover relevant professionals, generate personalized outreach drafts, and track conversations manually.
 
-Phase 1 MVP — Chicago-only, free + premium UI gating, no automation, no scraping.
+Phase 2 MVP — richer tracking, reminders, manual send logging, analytics. Still Chicago-only, no automation, no scraping.
 
 ## Stack
 
@@ -19,8 +19,9 @@ Phase 1 MVP — Chicago-only, free + premium UI gating, no automation, no scrapi
 ### 1. Create the Supabase project
 1. Go to [supabase.com](https://supabase.com) → **New project** (free tier).
 2. SQL Editor → paste and run `supabase/schema.sql`.
-3. SQL Editor → paste and run `supabase/seed.sql`.
-4. **Project Settings → API**: copy **Project URL**, **anon public key**, **service_role key**.
+3. SQL Editor → paste and run `supabase/migrations/phase2.sql` (adds campaigns, reminders, sent_messages, contact_notes, template_library, seniority, etc.).
+4. SQL Editor → paste and run `supabase/seed.sql`.
+5. **Project Settings → API**: copy **Project URL**, **anon public key**, **service_role key**.
 
 ### 2. Get an AI key
 - Easiest: [console.anthropic.com](https://console.anthropic.com) → $5 free credit, works out of the box.
@@ -130,10 +131,32 @@ All three have OpenAI-compatible APIs; the swap is ~20 lines. Ask and I'll do it
 
 ---
 
-## Roadmap (not built)
+## Phase 2 additions
+
+**New tables** (see `supabase/migrations/phase2.sql`): `campaigns`, `reminders`, `sent_messages`, `contact_notes`, `template_library`. Plus new columns: `contacts.seniority`, `relationship_entries.tags/last_touch_at/campaign_id`, `outreach_drafts.state/goal/campaign_id/sent_at`.
+
+**Home dashboard** — 5 key metrics (saved, contacted, replies, meetings, follow-ups due), next-best-action card, this-week action list, follow-up queue with one-click "Generate follow-up", recently sent, and a basic analytics block (outreach count, reply rate, meetings, reply rate by channel). Premium unlocks industry-level analytics.
+
+**Discover** — filters added for city, industry, role, seniority, and "alumni of my school only". Still Chicago-seeded, structured for future real ingestion.
+
+**Outreach** — goal picker (informational interview / mentorship ask / internship interest / alumni outreach / follow-up / thank-you), personalization controls (length, confidence, ask type), built-in + user-saved templates, draft state machine (`draft → ready → sent`). **Mark as sent** writes an immutable `sent_messages` row, timestamps the action, advances the contact's status to `contacted`, sets `last_touch_at`, and schedules a 5-day follow-up date. Nothing is ever sent externally.
+
+**Tracker** — click any card to open a contact drawer with:
+- Status dropdown + Kanban drag-and-drop
+- Tags (industry / campaign / city)
+- Last touch + editable next follow-up date
+- Separate note and meeting-note inputs
+- Chronological timeline merging sent messages + notes + meeting notes — the exact sent text is preserved forever so you can always see what actually went out.
+- Follow-up filter pill that isolates due items; cards glow when due.
+
+**Reminder engine** — pure in-app, derived on page load from `last_touch_at` + `next_action_at` + status. No external notifications yet.
+
+**Premium gating (UI only)** — free tier: 6 Discover matches, 5 active drafts, basic analytics, limited ask types. Premium: unlimited, advanced ask types (referral, resume review), industry-level analytics, unlimited history.
+
+## Roadmap (Phase 3)
 
 - Real LinkedIn import wizard
 - Email send integration (Gmail OAuth)
-- Reminders/cron for follow-ups
+- Scheduled reminder emails / push
 - Payments (Stripe) for premium
-- Additional cities
+- Additional cities (data already keyed by `city`)

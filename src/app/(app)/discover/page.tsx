@@ -7,12 +7,11 @@ export default async function DiscoverPage() {
 
   const [{ data: profile }, { data: contacts }, { data: rels }, { data: me }] = await Promise.all([
     supabase.from("student_profiles").select("*").eq("user_id", user!.id).maybeSingle(),
-    supabase.from("contacts").select("*").eq("city", "Chicago").order("full_name"),
+    supabase.from("contacts").select("*").order("full_name"),
     supabase.from("relationship_entries").select("contact_id, status").eq("user_id", user!.id),
     supabase.from("users").select("plan").eq("id", user!.id).maybeSingle(),
   ]);
 
-  // Simple scoring: industry match + role match + school match + tag overlap
   const scored = (contacts || []).map((c) => {
     let s = 0;
     const ind = (profile?.target_industries || []) as string[];
@@ -27,5 +26,12 @@ export default async function DiscoverPage() {
 
   const savedIds = new Set((rels || []).map((r) => r.contact_id));
 
-  return <DiscoverClient contacts={scored} savedIds={Array.from(savedIds)} plan={me?.plan || "free"} />;
+  return (
+    <DiscoverClient
+      contacts={scored}
+      savedIds={Array.from(savedIds)}
+      plan={me?.plan || "free"}
+      profileSchool={profile?.school || null}
+    />
+  );
 }
